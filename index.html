@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quiz Listening Test</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#f2f2f2;
+    padding:20px;
+}
+
+.quiz-container{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+.answer-btn{
+    display:block;
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:5px;
+    background:#3498db;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.answer-btn:hover{
+    background:#2980b9;
+}
+
+#nextBtn{
+    background:green;
+    margin-top:20px;
+}
+
+#score{
+    font-size:24px;
+    color:green;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+
+<h2 id="question">Question</h2>
+
+<div id="answers"></div>
+
+<button id="nextBtn" onclick="nextQuestion()">
+Next Question
+</button>
+
+<h3 id="progress"></h3>
+
+</div>
+
+<script>
+
+const quiz = [
+
+{
+question:"1. Seventh prize",
+answers:["151","150","115","105"],
+correct:2
+},
+
+{
+question:"2. Sixth prize",
+answers:["1707","1770","1777","1077"],
+correct:1
+},
+
+{
+question:"3. Fifth prize",
+answers:["91","19","90","09"],
+correct:1
+},
+
+{
+question:"4. Fourth prize",
+answers:["390","309","319","329"],
+correct:1
+},
+
+{
+question:"5. Third prize",
+answers:["55","53","59","56"],
+correct:2
+},
+
+{
+question:"6. Second prize",
+answers:["1990","1999","1099","1929"],
+correct:0
+},
+
+{
+question:"7. First prize",
+answers:["14","40","44","34"],
+correct:1
+},
+
+{
+question:"8. (1)",
+answers:[
+"ASSADA TOTCH",
+"ASADA TOSH",
+"AXADA DOSH",
+"AXADA BOSS"
+],
+correct:1
+},
+
+{
+question:"9. (2)",
+answers:[
+"MONIKA MANNING",
+"MOKIKA NANING",
+"MONICA NANING",
+"MOMIKA MANNING"
+],
+correct:0
+},
+
+{
+question:"10. (3)",
+answers:[
+"GAS AARN",
+"GASS ARRL",
+"DASS KARL",
+"GASS KARL"
+],
+correct:3
+},
+
+{
+question:"11. (4)",
+answers:[
+"SOPHI GADODS",
+"SOPHIE JACOBS",
+"SOTHIE GACOTS",
+"SOPHIE JACOBX"
+],
+correct:1
+},
+
+{
+question:"12. (5)",
+answers:[
+"KIRBY GERRLD",
+"KIRKBY GERALD",
+"KARKBY JERALD",
+"KAAKBI GERALD"
+],
+correct:1
+},
+
+{
+question:"13. (6)",
+answers:[
+"LA DUILLE FRANCINE",
+"LA TUILE SRACINE",
+"LA DUILLE FANCINE",
+"LA TUILLE FRANCINE"
+],
+correct:3
+},
+
+{
+question:"14. (7)",
+answers:[
+"FORSYTHE RICHARD",
+"SORSYTHE RICHARD",
+"FORSYTHE RICHARRD",
+"FOAXIDAE RICHARD"
+],
+correct:0
+},
+
+{
+question:"15. Where was Steve Jobs born?",
+answers:[
+"In London",
+"In Los Angeles",
+"In California",
+"In Mexico"
+],
+correct:2
+},
+
+{
+question:"16. Who did Jobs start Apple with?",
+answers:[
+"girlfriend",
+"friend",
+"cousin",
+"frend"
+],
+correct:1
+},
+
+{
+question:"17. When did Apple introduce the famous Macintosh computer?",
+answers:[
+"In 1940",
+"In 1980",
+"In 1918",
+"1984"
+],
+correct:3
+},
+
+{
+question:"18. Why did Jobs leave Apple?",
+answers:[
+"DDO",
+"CEO",
+"EEO",
+"EDO"
+],
+correct:1
+},
+
+{
+question:"19. What did Pixar specialise in?",
+answers:[
+"computer",
+"animal",
+"conputer",
+"laptop"
+],
+correct:0
+},
+
+{
+question:"20. It isn’t ….",
+answers:[
+"light",
+"right",
+"bright",
+"tight"
+],
+correct:2
+},
+
+{
+question:"21. The … isn’t well equipped.",
+answers:[
+"bathroom",
+"bath",
+"livingroom",
+"bedroom"
+],
+correct:0
+},
+
+{
+question:"22. The … doesn’t work well.",
+answers:[
+"tower",
+"shower",
+"power",
+"border"
+],
+correct:1
+},
+
+{
+question:"23. It’s so … to use.",
+answers:[
+"cheap",
+"expens",
+"low",
+"expensive"
+],
+correct:3
+},
+
+{
+question:"24. I have an old television in the …",
+answers:[
+"bathroom",
+"bath",
+"livingroom",
+"sittingroom"
+],
+correct:3
+},
+
+{
+question:"25. I can’t … TV in the evening",
+answers:[
+"talk",
+"wash",
+"watch",
+"push"
+],
+correct:2
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function loadQuestion(){
+
+const q = quiz[currentQuestion];
+
+document.getElementById("question").innerHTML =
+q.question;
+
+document.getElementById("progress").innerHTML =
+`Question ${currentQuestion + 1} / ${quiz.length}`;
+
+let answersHTML = "";
+
+q.answers.forEach((answer,index)=>{
+
+answersHTML += `
+<button class="answer-btn"
+onclick="checkAnswer(${index})">
+${answer}
+</button>
+`;
+
+});
+
+document.getElementById("answers").innerHTML =
+answersHTML;
+
+}
+
+function checkAnswer(index){
+
+const q = quiz[currentQuestion];
+
+const buttons =
+document.querySelectorAll(".answer-btn");
+
+buttons.forEach((btn,i)=>{
+
+btn.disabled = true;
+
+if(i === q.correct){
+
+btn.style.background = "green";
+
+}else if(i === index){
+
+btn.style.background = "red";
+
+}
+
+});
+
+if(index === q.correct){
+
+score++;
+
+}
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion < quiz.length){
+
+loadQuestion();
+
+}else{
+
+document.querySelector(".quiz-container").innerHTML =
+`
+<h1>🎉 Hoàn thành bài quiz</h1>
+
+<h2 id="score">
+Điểm của bạn: ${score}/${quiz.length}
+</h2>
+`;
+
+}
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
